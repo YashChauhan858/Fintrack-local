@@ -1,16 +1,6 @@
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  type ChartData,
-  type ChartOptions,
-} from "chart.js";
+import { type ChartData, type ChartOptions } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import { formatCurrency } from "@/utils/utils";
-
-// Register Chart.js components
-ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface ChartComponentProps {
   dataSet: ChartData<"pie">["datasets"];

@@ -1,5 +1,6 @@
 import { SplashCursor } from "./components/SplashCursor";
 import UIrenderer from "./components/UIrenderer";
+import "@/utils/chartjs.setup";
 
 export default function App() {
   return (

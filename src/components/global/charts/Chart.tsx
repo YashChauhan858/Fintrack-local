@@ -1,37 +1,8 @@
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  type ChartData,
-  type ChartOptions,
-  LineController,
-  BarElement,
-  BarController,
-} from "chart.js";
+import { type ChartData, type ChartOptions } from "chart.js";
 import { Chart } from "react-chartjs-2";
-import zoomPlugin from "chartjs-plugin-zoom";
 
 import { formatCurrency, formatNumberWithSuffix } from "@/utils/utils";
 
-// Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  LineController,
-  BarController,
-  zoomPlugin,
-);
 interface ChartComponentProps {
   dataSet: ChartData["datasets"];
   title?: string;

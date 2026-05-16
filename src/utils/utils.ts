@@ -1,3 +1,4 @@
+
 import * as XLSX from "xlsx";
 
 export const parseCsv = async (file: File) => {
@@ -80,3 +81,4 @@ export const getRandomHexColors = (
 
   return colors;
 };
+

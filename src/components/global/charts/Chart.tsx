@@ -14,6 +14,8 @@ import {
   BarController,
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
+import zoomPlugin from "chartjs-plugin-zoom";
+
 import { formatCurrency, formatNumberWithSuffix } from "@/utils/utils";
 
 // Register Chart.js components
@@ -28,6 +30,7 @@ ChartJS.register(
   Legend,
   LineController,
   BarController,
+  zoomPlugin,
 );
 interface ChartComponentProps {
   dataSet: ChartData["datasets"];
@@ -37,6 +40,7 @@ interface ChartComponentProps {
   yAxisText?: string;
   legend?: boolean;
   ySuffix?: boolean;
+  zoom?: boolean;
 }
 export const ChartComponent: React.FC<ChartComponentProps> = ({
   dataSet,
@@ -46,6 +50,7 @@ export const ChartComponent: React.FC<ChartComponentProps> = ({
   yAxisText,
   legend = false,
   ySuffix = false,
+  zoom = true,
 }) => {
   // Prepare chart data
   const chartData: ChartData = {
@@ -68,6 +73,25 @@ export const ChartComponent: React.FC<ChartComponentProps> = ({
       title: {
         display: false,
       },
+      ...(zoom
+        ? {
+            zoom: {
+              pan: {
+                enabled: true,
+                mode: "x",
+                modifierKey: "shift",
+              },
+              zoom: {
+                drag: {
+                  enabled: true,
+                },
+                mode: "x",
+              },
+            },
+          }
+        : {
+            zoom: undefined,
+          }),
     },
     scales: {
       y: {

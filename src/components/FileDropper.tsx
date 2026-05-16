@@ -1,4 +1,5 @@
 import useStore from "@/store/store";
+import { EventBus } from "@/utils/EventBus";
 import { handleFile } from "@/utils/fetchData";
 import { useState } from "react";
 
@@ -13,8 +14,9 @@ export default function DragAndDropUpload() {
 
     const files = Array.from(e.dataTransfer.files);
     setFile(files[0]);
-
+    EventBus.emit("loading-data", { loading: true });
     const [data, error] = await handleFile(files[0]);
+    EventBus.emit("loading-data", { loading: false });
     if (!data || error) return;
     setIsDragging(false);
     update("summery", data?.summery);
@@ -34,11 +36,11 @@ export default function DragAndDropUpload() {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     setFile(files[0]);
-
+    EventBus.emit("loading-data", { loading: true });
     const [data, error] = await handleFile(files[0]);
+    EventBus.emit("loading-data", { loading: false });
     if (!data || error) return;
     update("summery", data?.summery);
-    console.log({ parsed: data?.parsedData });
     update("parsedData", data?.parsedData);
     update("aiHeaderInterpretation", data.aiHeaderInterpretation);
   };

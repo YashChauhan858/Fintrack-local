@@ -13,8 +13,10 @@ import { getOllamaList } from "@/utils/fetchData";
 import DragAndDropUpload from "./FileDropper";
 import { cn } from "@/lib/utils";
 import ResetBtn from "./global/ResetBtn";
+import { EventBus } from "@/utils/EventBus";
 
 const Connected = () => {
+  const [statementLoader, setStatementLoader] = useState(false);
   const llmGlobalURL = useStore((state) => state.llmURL);
   const model = useStore((state) => state.model);
   const update = useStore((state) => state.update);
@@ -42,13 +44,28 @@ const Connected = () => {
     queueMicrotask(() => {
       fetchList();
     });
+    const unSub = EventBus.subscribe({
+      eventName: "loading-data",
+      cb: (e) => {
+        setStatementLoader(e?.detail?.loading ?? false);
+      },
+    });
+    return () => {
+      if (unSub) unSub();
+    };
   }, [fetchList]);
 
   return (
-    <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-2xl z-10 relative">
+    <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-2xl z-10 relative">
+      {statementLoader && (
+        <div className="absolute top-0 left-0 h-full w-full z-10 grid place-content-center bg-black/50 backdrop-blur-2xl">
+          <div className="loader"></div>{" "}
+        </div>
+      )}
+
       {error && (
         <div
-          className="absolute top-5 right-5"
+          className="absolute top-5 right-5 z-9"
           title="run: ollama start in your local terminal and retry"
         >
           <ResetBtn onClick={fetchList} />

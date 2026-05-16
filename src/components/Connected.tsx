@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useStore from "@/store/store";
 import {
   Select,
@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/select";
 import { getOllamaList } from "@/utils/fetchData";
 import DragAndDropUpload from "./FileDropper";
+import { cn } from "@/lib/utils";
+import ResetBtn from "./global/ResetBtn";
 
 const Connected = () => {
   const llmGlobalURL = useStore((state) => state.llmURL);
@@ -19,25 +21,55 @@ const Connected = () => {
   const [list, setList] = useState<string[]>([]);
   const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    (async () => {
-      const [data, error] = await getOllamaList(llmGlobalURL);
-      if (!data || error)
-        return setError(
-          (error as Error)?.message ?? "Unable to get model list",
-        );
+  const fetchList = useCallback(async () => {
+    if (!llmGlobalURL) {
+      setError("No connection url provided");
+      return;
+    }
 
-      setList(data?.models?.map((e) => e.model));
-    })();
+    const [data, error] = await getOllamaList(llmGlobalURL);
+
+    if (!data || error) {
+      setError((error as Error)?.message ?? "Unable to get model list");
+      return;
+    }
+
+    setList(data.models.map((e) => e.model));
+    setError("");
   }, [llmGlobalURL]);
 
+  useEffect(() => {
+    queueMicrotask(() => {
+      fetchList();
+    });
+  }, [fetchList]);
+
   return (
-    <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-2xl z-10">
+    <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-2xl z-10 relative">
+      {error && (
+        <div
+          className="absolute top-5 right-5"
+          title="run: ollama start in your local terminal and retry"
+        >
+          <ResetBtn onClick={fetchList} />
+        </div>
+      )}
+
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <div className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
-          <p className="text-sm font-medium tracking-wide text-emerald-300">
-            Connection Active
+          <div
+            className={cn(
+              `h-2.5 w-2.5 rounded-full animate-pulse`,
+              error ? "bg-red-300" : "bg-emerald-400",
+            )}
+          />
+          <p
+            className={cn(
+              `text-sm font-medium tracking-wide`,
+              error ? "text-red-300" : "text-emerald-400",
+            )}
+          >
+            {error ? "Connection Inactive" : "Connection Active"}
           </p>
         </div>
 
